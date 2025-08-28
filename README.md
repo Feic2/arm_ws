@@ -1,6 +1,6 @@
 # arm_ws — Panda MoveIt (ROS 2) Workspace
 
-This repository contains a minimal ROS 2 workspace for the Franka Emika **Panda** robot using **MoveIt 2**. It provides the robot description and a ready-to-run planning setup in RViz (with fake controllers).
+This repository contains a minimal ROS 2 workspace for the Franka Emika **Panda** robot using **MoveIt 2**. It provides the robot description and a ready-to-run planning setup in RViz.
 
 > Note: This is a *motion planning* demo (no physics simulator by default). You can add Gazebo/Ignition later if you need dynamics.
 
@@ -60,26 +60,10 @@ source install/setup.bash
 ```
 
 ### Launch MoveIt (RViz MotionPlanning demo)
-Option A — via the MoveIt tutorials demo launch (uses this Panda config):
+via the MoveIt tutorials demo launch (uses this Panda config):
 ```bash
 ros2 launch moveit2_tutorials demo.launch.py
 ```
-Option B — bring up MoveIt with fake controllers using this repo’s config (if you have a local launch file):
-```bash
-# Example if you add a launch/ folder later:
-ros2 launch panda_moveit_config demo.launch.py
-```
-Then in RViz:
-- Add the **MotionPlanning** display if it isn’t present.
-- Choose a Planning Group (e.g., `panda_arm` or `panda_manipulator`).
-- Set a Goal State/Position and click **Plan** → **Execute**. The robot will move in RViz using *fake* controllers.
-
-Troubleshooting
-- If you don’t see meshes, ensure the Panda description package is found and the RViz Fixed Frame is `world` or `panda_link0`.
-- If planning fails immediately, verify the Planning Scene has no red (in-collision) links and that `ompl` is the active planning pipeline.
-- To reload the environment, restart RViz and the launch above.
-
----
 
 ## Brief algorithm descriptions
 
@@ -94,23 +78,5 @@ Troubleshooting
   - the Panda’s collision geometry (from URDF/SRDF), and
   - any environment objects added to the scene.
 - **Safety margin:** The SRDF’s Allowed Collision Matrix and link padding control which contacts are permitted and how conservative avoidance is.
-- **Dynamic obstacles:** You can insert/remove objects at runtime (e.g., via the RViz *PlanningScene* panel or a node using `moveit_msgs/CollisionObject`). The planner replans to avoid new obstacles.
-- **Execution:** With fake controllers, the plan is visualized/executed in RViz; with hardware/ros2_control, the same plan would produce `FollowJointTrajectory` commands.
 
----
 
-## Notes & next steps
-- To turn on **Pilz** (industrial Cartesian motions like LIN/CIRC), switch the planning pipeline to `pilz_industrial_motion_planner` and provide limits via the included YAMLs.
-- To try **CHOMP**, enable the `chomp` pipeline and provide a good collision cost map; it optimizes a seed path for smoother, obstacle-cost-aware motion.
-- For a physics simulator, add a `gazebo_ros2_control` setup and real controllers (replace fake ones in `ros2_controllers.yaml`).
-
----
-
-## One-time Git/GitHub setup (so you can push this README)
-```bash
-git config --global user.name "Fei Chen"
-git config --global user.email "Feic2@users.noreply.github.com"   # or your real GitHub email
-git add README.md
-git commit -m "Add detailed README for Panda MoveIt workspace"
-git push -u origin main
-```
